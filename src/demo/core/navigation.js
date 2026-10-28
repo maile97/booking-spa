@@ -1,0 +1,1 @@
+function go(p){document.querySelectorAll('.page').forEach(e=>e.classList.toggle('active',e.id===p));document.querySelectorAll('.nav').forEach(e=>e.classList.toggle('active',e.dataset.page===p));render();window.scrollTo(0,0)}document.querySelectorAll('.nav').forEach(b=>b.addEventListener('click',()=>go(b.dataset.page)));
