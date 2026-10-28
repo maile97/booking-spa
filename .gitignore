@@ -1,0 +1,17 @@
+# macOS
+.DS_Store
+.AppleDouble
+
+# Editor
+.vscode/*.log
+.idea/
+
+# Local environment
+.env
+.env.*
+!.env.example
+
+# Dependencies / build outputs (future migration)
+node_modules/
+dist/
+coverage/
