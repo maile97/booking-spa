@@ -1,0 +1,3 @@
+function getService(id){return services.find(s=>s.id===id)}function getStaff(id){return staff.find(s=>s.id===id)}function getCustomer(id){return customers.find(s=>s.id===id)}function minutes(t){const p=t.split(':').map(Number);return p[0]*60+p[1]}function endTime(b){let v=minutes(b.time)+getService(b.service).duration;return String(Math.floor(v/60)).padStart(2,'0')+':'+String(v%60).padStart(2,'0')}
+function notify(msg){let t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2600)}
+function statusPill(s){return '<span class="pill '+({completed:'done',cancelled:'cancel',checkedin:'progress'}[s]||'')+'">'+labelStatus[s]+'</span>'}
