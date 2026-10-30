@@ -1,1 +1,0 @@
-document.getElementById('modal').addEventListener('click',e=>{if(e.target.id==='modal')closeModal()});document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal()});load();document.getElementById('dashDate').value=today();document.getElementById('calDate').value=today();render();

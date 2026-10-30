@@ -1,80 +1,76 @@
-# Spa Booking — Product Research & Interactive Demo
+# Spa Booking Platform — Research & Interactive Demo
 
-Prototype nghiên cứu và mô phỏng nghiệp vụ Spa Booking theo phong cách Haravan Admin.
+MVP Spa Booking với hai luồng chính: **Đặt lịch** và **Quản lý đơn hàng đã đặt**. Dự án chạy thuần HTML/CSS/JavaScript qua Live Server; source được tách lớp để có thể thay local database bằng API mà không viết lại UI.
 
-## Chạy trên máy (macOS / VS Code)
+## Database khuyến nghị
 
-1. `git clone https://github.com/maile97/booking-spa.git`
-2. `cd booking-spa`
-3. Mở thư mục trong VS Code (`code .` hoặc **File → Open Folder**).
-4. Cài extension **Live Server** (Ritwick Dey), click phải `index.html` hoặc `demo.html` → **Open with Live Server**.
+Nên dùng **Supabase Free** trong giai đoạn thử nghiệm: PostgreSQL chuẩn, Auth, API tự sinh, Realtime và Row Level Security. Khi triển khai thật, tạo các bảng `branches`, `customers`, `staff`, `services`, `bookings`; bật RLS theo `tenant_id`/`branch_id`; đặt constraint ở database để chống double-booking. Frontend không được dùng service-role key.
 
-Không cần `npm install` hay build. Dùng Live Server thay vì mở trực tiếp `file://` để kiểm tra đúng cách phục vụ static assets.
+```text
+UI → BookingService (validation/use case) → Repository → Supabase adapter → PostgreSQL
+```
 
-## Cấu trúc
+`localStorage` hiện chỉ là adapter demo. Trước khi public production cần bổ sung đăng nhập/phân quyền, audit log, kiểm thử tự động, monitoring, timezone chuẩn và transaction chống trùng lịch phía server.
+
+## Chạy trên máy
+
+1. Mở repository bằng VS Code.
+2. Cài extension **Live Server**.
+3. Click phải `index.html` hoặc `demo.html` → **Open with Live Server**.
+
+Không cần `npm install`. Không nên mở trực tiếp bằng `file://`.
+
+## Kiến trúc source
 
 ```text
 booking-spa/
-├── index.html                      # Research Hub, điểm vào GitHub Pages
-├── demo.html                       # Spa Booking Admin demo
-├── assets/
-│   └── css/
-│       ├── research.css            # Style Research Hub
-│       ├── demo-base.css           # Style nền của demo
-│       └── demo-haravan.css        # Override theo Haravan Admin
-├── src/
-│   ├── research/
-│   │   ├── app.js                  # Điều hướng, lọc, modal benchmark
-│   │   └── data/
-│   │       ├── benchmarks.js       # Dữ liệu feature benchmark
-│   │       └── screenshots.js      # Screenshot benchmark (base64)
-│   └── demo/
-│       ├── main.js                 # Khởi tạo demo & sự kiện chung
-│       ├── core/
-│       │   ├── data.js             # Dữ liệu mẫu, localStorage, trạng thái
-│       │   ├── utils.js            # Helper dùng chung
-│       │   └── navigation.js       # Điều hướng trang
-│       └── features/
-│           ├── bookings.js         # Lịch hẹn: tạo/sửa/hủy, kiểm tra trùng
-│           ├── calendar.js         # Lịch KTV
-│           ├── dashboard.js        # Tổng quan, KPI, danh sách
-│           └── reports.js          # Báo cáo Spa
-└── .gitignore
+├── index.html                         # Research Hub
+├── demo.html                          # Admin application
+├── assets/css/                        # Presentation layer
+└── src/
+    ├── apps/
+    │   ├── admin/
+    │   │   ├── core/                  # Điều hướng application
+    │   │   ├── features/              # Booking, calendar, dashboard, report
+    │   │   ├── runtime/store.js       # Ghép database vào UI hiện tại
+    │   │   └── main.js                # Bootstrap Admin app
+    ├── research/                      # Research app và dữ liệu benchmark
+    ├── platform/
+    │   ├── config/                    # Cấu hình platform
+    │   ├── database/
+    │   │   ├── schema.js              # Schema và danh sách table
+    │   │   └── seeds/                 # Dữ liệu khởi tạo
+    │   ├── infrastructure/storage/    # Local database adapter
+    │   └── repositories/              # Data access cho catalog/booking
+    └── shared/                        # Helper dùng chung
 ```
 
-## Hướng dẫn chỉnh sửa theo tính năng
+Luồng phụ thuộc một chiều:
 
-- **Lịch hẹn**: `src/demo/features/bookings.js`; HTML trong `demo.html`.
-- **Lịch KTV**: `src/demo/features/calendar.js`; HTML trong `demo.html`.
-- **Dashboard / KPI**: `src/demo/features/dashboard.js`.
-- **Báo cáo**: `src/demo/features/reports.js`.
-- **Dịch vụ / SKU, gói liệu trình, nhân viên / hoa hồng**: hiện là các màn hình prototype tĩnh trong `demo.html`; khi phát triển logic, tạo file tương ứng dưới `src/demo/features/`.
-- **Dữ liệu mẫu**: `src/demo/core/data.js`; giữ tương thích key `haravan-spa-demo-v1` trong localStorage.
-- **Benchmark / research**: `src/research/data/benchmarks.js`, `src/research/app.js`.
-
-**Lưu ý:** Đây là bước đầu tách nguồn code theo module chức năng, **chưa phải React/TypeScript**. Các file JS vẫn dùng classic `<script>` và biến/hàm toàn cục để giữ tương thích với inline event handlers hiện tại. Không tự ý thêm `type="module"` khi chưa chuyển toàn bộ event handlers/imports. HTML markup hiện vẫn nằm trong 2 entrypoint để không phá giao diện hiện có.
-
-## Quy trình làm việc nhóm
-
-```bash
-git pull origin main
-git checkout -b feature/booking-validation
-# Chỉnh sửa và kiểm tra bằng Live Server
-git add .
-git commit -m "feat: improve booking validation"
-git push -u origin feature/booking-validation
+```text
+UI features → runtime store → repositories → local database → schema/seeds
 ```
 
-Tạo **Pull Request** về `main`, review trước khi merge. GitHub Pages triển khai từ `main`.
+## Database giả lập
 
-## Links
+Database được lưu trong `localStorage` với key `spa-booking-platform-db`. Cấu trúc hiện tại:
 
-- Research: https://maile97.github.io/booking-spa/
-- Demo: https://maile97.github.io/booking-spa/demo.html
-- Repository: https://github.com/maile97/booking-spa
+- `meta`: phiên bản schema và thời điểm seed.
+- `branches`: chi nhánh.
+- `customers`: khách hàng.
+- `staff`: nhân viên/KTV.
+- `services`: dịch vụ, giá, thời lượng và KTV phù hợp.
+- `packages`: gói liệu trình.
+- `bookings`: lịch hẹn và trạng thái vận hành.
 
-## Lưu ý kỹ thuật
+Nút **Đặt lại dữ liệu** tạo lại toàn bộ database. Adapter tự migrate booking từ key cũ `haravan-spa-demo-v1` ở lần chạy đầu, nên dữ liệu demo đã nhập trước đó không bị mất.
 
-- Báo cáo và hoa hồng demo dùng dữ liệu giả lập, không kết nối API Haravan/POS.
-- Screenshot benchmark được giữ nguyên trong `src/research/data/screenshots.js`; có thể chuyển thành file ảnh trong `assets/images/` ở đợt tối ưu tiếp theo.
-- Khi dự án có backend, phân quyền, nhiều developer và tính năng phức tạp, cân nhắc chuyển sang Vite + React + TypeScript, API layer, router và test tự động.
+Khi có backend thật, giữ repository contract và thay `local-database.js` bằng HTTP/API adapter. UI feature không cần biết dữ liệu nằm ở localStorage hay server.
+
+## Quy ước phát triển tiếp
+
+- Mỗi nghiệp vụ mới đặt trong `src/apps/admin/features/<feature>.js`.
+- Thay đổi schema phải tăng `schemaVersion` và bổ sung migration.
+- Feature không đọc/ghi localStorage trực tiếp; truy cập qua repository/runtime store.
+- Booking quản lý thời gian; Order quản lý giao dịch; Entitlement quản lý quyền lợi; Commission quản lý khoản phải trả. Không gộp trạng thái các domain này.
+- Khi scope lớn hơn prototype, bước tiếp theo phù hợp là Vite + TypeScript, router, API server và test tự động.
