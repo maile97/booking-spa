@@ -35,7 +35,14 @@ const SpaDatabase = (() => {
   function load() {
     try {
       const saved = JSON.parse(localStorage.getItem(SPA_CONFIG.databaseKey));
-      if (isValid(saved)) return saved;
+      if (isValid(saved)) {
+        const denseDemo = createBookingSeed(databaseToday()).filter(item => ['BK-1005', 'BK-1006', 'BK-1007'].includes(item.id));
+        let changed = false;
+        denseDemo.forEach(item => { if (!saved.bookings.some(booking => booking.id === item.id)) { saved.bookings.push(item); changed = true; } });
+        SPA_SEED_CATALOG.customers.forEach(seedCustomer => { const customer = saved.customers.find(item => item.id === seedCustomer.id); if (customer && !customer.email) { customer.email = seedCustomer.email; changed = true; } });
+        if (changed) save(saved);
+        return saved;
+      }
     } catch (error) {
       console.warn('Database local bị lỗi, hệ thống sẽ tạo lại dữ liệu mẫu.', error);
     }

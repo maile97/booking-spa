@@ -12,10 +12,10 @@ const SPA_SEED_CATALOG = Object.freeze({
     { id: 'NV03', branchId: 'BR01', name: 'Thảo Vy', active: true }
   ],
   customers: [
-    { id: 'KH001', name: 'Nguyễn Minh Hà', phone: '0901234567' },
-    { id: 'KH002', name: 'Trần Bảo Ngọc', phone: '0912345678' },
-    { id: 'KH003', name: 'Lê Hoàng Yến', phone: '0987654321' },
-    { id: 'KH004', name: 'Phạm Gia Linh', phone: '0934567890' }
+    { id: 'KH001', name: 'Nguyễn Minh Hà', phone: '0901234567', email: 'minhha@example.com' },
+    { id: 'KH002', name: 'Trần Bảo Ngọc', phone: '0912345678', email: 'baongoc@example.com' },
+    { id: 'KH003', name: 'Lê Hoàng Yến', phone: '0987654321', email: 'hoangyen@example.com' },
+    { id: 'KH004', name: 'Phạm Gia Linh', phone: '0934567890', email: 'gialinh@example.com' }
   ],
   packages: [
     { id: 'PKG-001', name: 'Combo chăm sóc da 5 buổi', price: 2800000, sessions: 5, service: 'SVC-001' },
