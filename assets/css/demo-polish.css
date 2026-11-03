@@ -341,3 +341,6 @@ body:has(#pos.active)>aside{display:none}body:has(#pos.active) main{margin-left:
 
 /* Seven appointment and live-resource score cards. */
 .pos-summary{grid-template-columns:repeat(7,minmax(126px,1fr));overflow-x:auto}.pos-summary .resource-metric{background:#f7faff}.pos-summary .resource-metric b{color:#2563eb;font-size:20px}@media(max-width:1200px){.pos-summary{grid-template-columns:repeat(4,minmax(150px,1fr))}}@media(max-width:760px){.pos-summary{grid-template-columns:repeat(2,minmax(145px,1fr))}}
+
+/* Customer entitlement applied inside the existing POS checkout. */
+.entitlement-applied-banner{display:flex;align-items:center;justify-content:space-between;gap:16px;margin:10px 16px 0;padding:12px 14px;border:1px solid #a7e2c2;border-radius:9px;background:#edf9f2;color:#177548}.entitlement-applied-banner span{color:#3f6d55;font-size:13px}.haravan-cart-lines article.entitlement-line{background:#f5fbf7}.haravan-cart-lines article.entitlement-line .cart-thumb{background:#e4f7ec;color:#177548}.haravan-cart-lines article.entitlement-line strong,.haravan-cart-lines article.entitlement-line .line-total{color:#177548}.entitlement-summary{color:#177548}.entitlement-summary b{color:#177548!important}@media(max-width:760px){.entitlement-applied-banner{align-items:flex-start;flex-direction:column;gap:4px}}
